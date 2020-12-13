@@ -1,5 +1,9 @@
 version: '2.1'
 
+networks:
+  monitor-net:
+    driver: host
+
 volumes:
     prometheus_data: {}
     grafana_data: {}
