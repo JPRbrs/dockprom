@@ -1,8 +1,9 @@
 version: '2.1'
 
+network-mode: host
+
 networks:
   monitor-net:
-    driver: host
 
 volumes:
     prometheus_data: {}
