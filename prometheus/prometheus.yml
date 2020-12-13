@@ -34,6 +34,12 @@ scrape_configs:
     static_configs:
       - targets: ['pushgateway:9091']
 
+  - job_name: 'pantalones'
+    scrape_interval: 10s
+    honor_labels: true
+    static_configs:
+      - targets: ['192.168.0.18:9091']
+
 
 alerting:
   alertmanagers:
