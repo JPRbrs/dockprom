@@ -13,7 +13,7 @@ rule_files:
 
 # A scrape configuration containing exactly one endpoint to scrape.
 scrape_configs:
-  - job_name: 'nodeexporter'
+  - job_name: 'leviathan'
     scrape_interval: 5s
     static_configs:
       - targets: ['nodeexporter:9100']
@@ -38,7 +38,13 @@ scrape_configs:
     scrape_interval: 10s
     honor_labels: true
     static_configs:
-      - targets: ['192.168.0.18:9091']
+      - targets: ['192.168.0.18:9100']
+
+  - job_name: 'valhalla'
+    scrape_interval: 10s
+    honor_labels: true
+    static_configs:
+      - targets: ['192.168.0.15:9100']
 
 
 alerting:
