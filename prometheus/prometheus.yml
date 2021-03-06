@@ -46,6 +46,13 @@ scrape_configs:
     static_configs:
       - targets: ['192.168.0.15:9100']
 
+  - job_name: 'homeassistant'
+      scrape_interval: 60s
+      metrics_path: /api/prometheus
+      bearer_token: <update>
+      static_configs:
+        - targets:
+          - "192.0.2.15:8123"
 
 alerting:
   alertmanagers:
