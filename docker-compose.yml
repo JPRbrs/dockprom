@@ -3,6 +3,7 @@ version: '2.1'
 volumes:
     prometheus_data: {}
     grafana_data: {}
+    influxdb_data: {}
 
 services:
 
@@ -41,11 +42,11 @@ services:
       org.label-schema.group: "monitoring"
 
   influxdb:
-    image: influxdb
+    image: influxdb:1.8
     container_name: influxdb
     volumes:
-      - /srv/monitor/influxdb/data:/var/lib/influxdb
-      - /srv/monitor/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro
+      - influxdb_data:/var/lib/influxdb
+      - ./influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro
     restart: unless-stopped
     network_mode: host
     labels:
