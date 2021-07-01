@@ -40,6 +40,17 @@ services:
     labels:
       org.label-schema.group: "monitoring"
 
+  influxdb:
+    image: influxdb
+    container_name: influxdb
+    volumes:
+      - /srv/monitor/influxdb/data:/var/lib/influxdb
+      - /srv/monitor/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro
+    restart: unless-stopped
+    network_mode: host
+    labels:
+      org.label-schema.group: "monitoring"
+
   cadvisor:
     # image: gcr.io/cadvisor/cadvisor:v0.38.8
     image: budry/cadvisor-arm
@@ -55,8 +66,6 @@ services:
     network_mode: host
     labels:
       org.label-schema.group: "monitoring"
-
-
 
   nodeexporter:
     image: prom/node-exporter:v1.1.1
