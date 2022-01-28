@@ -1,34 +1,64 @@
-version: '2.1'
+version: '3'
 
-volumes:
-    prometheus_data: {}
-    grafana_data: {}
+networks:
+  external:
+    external: true
+    driver: bridge
 
 services:
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb
+    restart: unless-stopped
+    networks: [external]
+    ports:
+      - "8086:8086"
+    volumes:
+      - /media/usb/influxdb/data:/var/lib/influxdb
+      - /media/usb/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro
+      - /media/usb/influxdb/init:/docker-entrypoint-initdb.d
+    environment:
+      - INFLUXDB_ADMIN_USER=${INFLUXDB_USERNAME} # sourced from .env
+      - INFLUXDB_ADMIN_PASSWORD=${INFLUXDB_PASSWORD} # sourced from .env
+    labels:
+      - "traefik.http.routers.influxdb.rule=Host(`influxdb.leviathan.home.lan`)"
+      - "traefik.enable=true"
+      - "traefik.http.routers.sample.entrypoints=web"
+      - "traefik.http.services.influxdb.loadbalancer.server.port=8086"
+      - "traefik.docker.network=external"
+      - "org.label-schema.group=monitoring"
 
   prometheus:
-    image: prom/prometheus:v2.25.0
+    image:  prom/prometheus:v2.25.0
     container_name: prometheus
     volumes:
       - ./prometheus:/etc/prometheus
-      - prometheus_data:/prometheus
+      - /media/usb/prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/etc/prometheus/console_libraries'
       - '--web.console.templates=/etc/prometheus/consoles'
-      - '--storage.tsdb.retention.time=1500h' # 2 months
+      - '--storage.tsdb.retention.time=48h'
       - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
     restart: unless-stopped
-    network_mode: host
+    networks:
+      - external
     labels:
-      org.label-schema.group: "monitoring"
+      - "traefik.http.routers.prometheus.rule=Host(`prometheus.leviathan.home.lan`)"
+      - "traefik.enable=true"
+      - "traefik.http.routers.sample.entrypoints=web"
+      - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
+      - "traefik.docker.network=external"
+      - "org.label-schema.group=monitoring"
 
   grafana:
     image: grafana/grafana:7.4.2
     container_name: grafana
     volumes:
-      - grafana_data:/var/lib/grafana
+      - /media/usb/grafana_data:/var/lib/grafana
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
     environment:
@@ -36,9 +66,17 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
       - GF_USERS_ALLOW_SIGN_UP=false
     restart: unless-stopped
-    network_mode: host
+    ports:
+      - "3000:3000"
+    networks:
+      - external
     labels:
-      org.label-schema.group: "monitoring"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.leviathan.home.lan`)"
+      - "traefik.enable=true"
+      - "traefik.http.routers.sample.entrypoints=web"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+      - "traefik.docker.network=external"
+      - "org.label-schema.group=monitoring"
 
   cadvisor:
     # image: gcr.io/cadvisor/cadvisor:v0.38.8
@@ -52,11 +90,17 @@ services:
       - /dev/disk:/dev/disk:ro
       - /cgroup:/cgroup:ro #doesn't work on MacOS only for Linux
     restart: unless-stopped
-    network_mode: host
+    networks:
+      - external
+    ports:
+      - 8090:8080
     labels:
-      org.label-schema.group: "monitoring"
-
-
+      - "org.label-schema.group=monitoring"
+      - "traefik.http.routers.cadvisor.rule=Host(`cadvisor.leviathan.home.lan`)"
+      - "traefik.enable=true"
+      - "traefik.http.routers.sample.entrypoints=web"
+      - "traefik.http.services.cadvisor.loadbalancer.server.port=8090"
+      - "traefik.docker.network=external"
 
   nodeexporter:
     image: prom/node-exporter:v1.1.1
@@ -95,22 +139,5 @@ services:
   #   restart: unless-stopped
   #   ports:
   #     - 9091:9091
-  #   labels:
-  #     org.label-schema.group: "monitoring"
-
-  # caddy:
-  #   image: stefanprodan/caddy
-  #   container_name: caddy
-  #   ports:
-  #     - "3000:3000"
-  #     - "9090:9090"
-  #     - "9093:9093"
-  #     - "9091:9091"
-  #   volumes:
-  #     - ./caddy:/etc/caddy
-  #   environment:
-  #     - ADMIN_USER=${ADMIN_USER:-admin}
-  #     - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
-  #   restart: unless-stopped
   #   labels:
   #     org.label-schema.group: "monitoring"

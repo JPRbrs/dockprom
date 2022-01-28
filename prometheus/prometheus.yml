@@ -17,23 +17,23 @@ scrape_configs:
     scrape_interval: 10s
     honor_labels: true
     static_configs:
-      - targets: ["localhost:9100"]
+      - targets: ["leviathan.home.lan:9100"]
 
   - job_name: 'SAI'
     scrape_interval: 10s
     honor_labels: true
     static_configs:
-      - targets: ["localhost:9162"]
+      - targets: ["leviathan.home.lan:9162"]
 
   - job_name: 'cadvisor'
     scrape_interval: 5s
     static_configs:
-      - targets: ['localhost:8080']
+      - targets: ['leviathan.home.lan:8090']
 
   - job_name: 'prometheus'
     scrape_interval: 10s
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ['leviathan.home.lan:9090']
 
   # - job_name: 'pushgateway'
   #   scrape_interval: 10s
@@ -41,49 +41,35 @@ scrape_configs:
   #   static_configs:
   #     - targets: ['pushgateway:9091']
 
-  - job_name: 'pantalones'
-    scrape_interval: 10s
-    honor_labels: true
-    static_configs:
-      - targets: ['192.168.0.18:9100']
-
   - job_name: 'valhalla'
     scrape_interval: 10s
     honor_labels: true
     static_configs:
-      - targets: ['192.168.0.15:9100']
+      - targets: ['192.168.1.15:9100']
 
   - job_name: 'homeassistant'
     scrape_interval: 60s
     metrics_path: /api/prometheus
-    bearer_token:
+    # bearer_token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI0NzY2ZDFhNmIxMTA0OTBiOGM2YjBlM2FhNTNiZjk4YiIsImlhdCI6MTY0MDkwNDIwOSwiZXhwIjoxOTU2MjY0MjA5fQ.y0lco6n805bFK3yPJh9SFoG18xAndfHPPV9XZEbWQrQ
+    bearer_token: secretToken
     static_configs:
-      - targets: ["localhost:8123"]
+      - targets: ["hass.leviathan.home.lan:8123"]
 
-alerting:
-  alertmanagers:
-  - scheme: http
-    static_configs:
-    - targets: 
-      - 'alertmanager:9093'
+# alerting:
+#   alertmanagers:
+#   - scheme: http
+#     static_configs:
+#     - targets: 
+#       - 'alertmanager:9093'
 
-#  - job_name: 'nginx'
-#    scrape_interval: 10s
-#    static_configs:
-#      - targets: ['nginxexporter:9113']
-
-#  - job_name: 'aspnetcore'
-#    scrape_interval: 10s
-#    static_configs:
-#      - targets: ['eventlog-proxy:5000', 'eventlog:5000']
 
 remote_write:
-- url: http://localhost:8086/api/v1/prom/write?u=prometheus&p=prometheus&db=home_assistant
+- url: http://influxdb.leviathan.home.lan:8086/api/v1/prom/write?u=hass&p=hass&db=hass
   remote_timeout: 30s
   write_relabel_configs:
   - source_labels: [__name__]
     separator: ;
-    regex: (power_w)
+    regex: (homeassistant_sensor_power_w)
     replacement: $1
     action: keep
   queue_config:
@@ -98,5 +84,6 @@ remote_write:
     send: true
     send_interval: 1m
 remote_read:
-- url: http://localhost:8086/api/v1/prom/read?u=prometheus&p=prometheus&db=home_assistant
+- url: http://influxdb.leviathan.home.lan:8086/api/v1/prom/read?u=hass&p=hass&db=hass
   remote_timeout: 1m
+
