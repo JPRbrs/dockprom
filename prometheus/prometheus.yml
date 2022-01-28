@@ -50,7 +50,6 @@ scrape_configs:
   - job_name: 'homeassistant'
     scrape_interval: 60s
     metrics_path: /api/prometheus
-    # bearer_token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI0NzY2ZDFhNmIxMTA0OTBiOGM2YjBlM2FhNTNiZjk4YiIsImlhdCI6MTY0MDkwNDIwOSwiZXhwIjoxOTU2MjY0MjA5fQ.y0lco6n805bFK3yPJh9SFoG18xAndfHPPV9XZEbWQrQ
     bearer_token: secretToken
     static_configs:
       - targets: ["hass.leviathan.home.lan:8123"]
