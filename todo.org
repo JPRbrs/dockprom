@@ -1,0 +1,6 @@
+- Configure alerts
+- Configure the rest of the apps
+- Hide long lived token from prom config (render template from secretos with envsubst)
+- Update host names in prometheus.yaml, within leviathan, container names work, DNS should work too
+- find storage needed with https://faun.pub/how-to-calculate-the-storage-space-required-for-prometheus-server-24ce4cacc30d
+- Configure telegraf and influxdb retaining only useful metrics
