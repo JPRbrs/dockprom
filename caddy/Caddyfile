@@ -13,7 +13,7 @@ http://prometheus.home.lan {
     basicauth /* {
         {$ADMIN_USER} {$ADMIN_PASSWORD_HASH}
     }
-    reverse_proxy http://localhost:9090
+    reverse_proxy http://prometheus:9090
 }
 
 http://alertmanager.home.lan {

@@ -4,8 +4,8 @@ global:
 
   # Attach these labels to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager).
-  external_labels:
-      monitor: 'docker-host-alpha'
+  # external_labels:
+  #     monitor: 'docker-host-alpha'
 
 # Load and evaluate rules in this file every 'evaluation_interval' seconds.
 rule_files:
@@ -65,13 +65,16 @@ scrape_configs:
        replacement: "$1"
 
   - job_name: 'prometheus'
-    scrape_interval: 10s
+    scrape_interval: 5s
     static_configs:
       - targets: ['localhost:9090']
 
   - job_name: "homeassistant"
-    scrape_interval: 60s
+    scrape_interval: 15s
     metrics_path: /api/prometheus
+
+    # Long-Lived Access Token
+    
 
     scheme: http
     static_configs:
