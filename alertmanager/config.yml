@@ -1,11 +1,17 @@
-route:
-    receiver: 'slack'
-
 receivers:
-    - name: 'slack'
-      slack_configs:
-          - send_resolved: true
-            text: "{{ .CommonAnnotations.description }}"
-            username: 'Prometheus'
-            channel: '#<channel-name>'
-            api_url: 'https://hooks.slack.com/services/<webhook-id>'
+- name: 'telegram'
+  telegram_configs:
+  - chat_id: 
+    bot_token: 
+    send_resolved: true  # Optional: Send notifications when alerts resolve
+
+route:
+  receiver: 'telegram'
+  group_by: ['alertname']  # Group alerts by alertname
+  group_wait: 30s  # Time to wait to group alerts
+  group_interval: 5m  # Time to wait before sending a new notification
+  repeat_interval: 3h  # Time to wait before resending the same notification
+  routes:
+  - match:
+      severity: critical
+    receiver: 'telegram'

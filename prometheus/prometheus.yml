@@ -16,7 +16,7 @@ scrape_configs:
   - job_name: 'leviathan_nodeexporter'
     scrape_interval: 5s
     static_configs:
-      - targets: ['localhost:9100']
+      - targets: ['192.168.69.222:9100']
     relabel_configs:
      - source_labels: [__address__]
        regex: "([^:]+):.*"
@@ -33,11 +33,10 @@ scrape_configs:
         target_label: computer
         replacement: "$1"
 
-
   - job_name: 'leviathan_cadvisor'
     scrape_interval: 5s
     static_configs:
-      - targets: ['localhost:8080']
+      - targets: ['cadvisor:8080']
     relabel_configs:
      - source_labels: [__address__]
        regex: "([^:]+):.*"
@@ -74,7 +73,7 @@ scrape_configs:
     metrics_path: /api/prometheus
 
     # Long-Lived Access Token
-    
+
 
     scheme: http
     static_configs:

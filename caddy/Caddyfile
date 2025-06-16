@@ -3,29 +3,30 @@ http://grafana.home.lan {
 }
 
 http://cadvisor.home.lan {
-    basicauth /* {
+    basic_auth /* {
         {$ADMIN_USER} {$ADMIN_PASSWORD_HASH}
     }    
-    reverse_proxy http://localhost:8080
+    reverse_proxy http://cadvisor:8080
 }
 
 http://prometheus.home.lan {
-    basicauth /* {
+    basic_auth /* {
         {$ADMIN_USER} {$ADMIN_PASSWORD_HASH}
     }
     reverse_proxy http://prometheus:9090
 }
 
 http://alertmanager.home.lan {
-    basicauth /* {
+    basic_auth /* {
         {$ADMIN_USER} {$ADMIN_PASSWORD_HASH}
     }
-    reverse_proxy http://localhost:9093
+    reverse_proxy http://alertmanager:9093
 }
 
-http://nodeexporter.home.lan {
-    basicauth /* {
+http://nodeexporter.leviathan.home.lan {
+    basic_auth /* {
         {$ADMIN_USER} {$ADMIN_PASSWORD_HASH}
     }
-    reverse_proxy http://localhost:9100
+    reverse_proxy http://nodeexporter:9100
 }
+
