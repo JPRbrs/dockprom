@@ -1,11 +1,30 @@
 groups:
-- name: example
+# Power alert - homeassistant_sensor_power_w
+- name: power_alerts
   rules:
-  - alert: TestAlert
-    expr: vector(1)  # Always true for testing
-    for: 10s
+  - alert: Power consumption too high
+    expr: homeassistant_sensor_power_w > 3000
+    for: 5s
     labels:
       severity: critical
     annotations:
-      summary: "Test Alert"
-      description: "This is a test alert sent to Telegram."
+      summary: "Power consumption too high - over 3000W"
+      description: "There is a high power consumption at home."
+- name: docker_containers
+  rules:
+  - alert: containers running in Valhalla
+    expr: count(container_tasks_state{image!="", state="running", job="valhalla_cadvisor"}) <2
+    for: 5s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Container down in Valhalla"
+      description: "Valhalla has less than 2 containers running"
+  - alert: containers running in Leviathan
+    expr: count(container_tasks_state{image!="", state="running", job="leviathan_cadvisor"}) <7
+    for: 5s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Container down in Leviathan"
+      description: "Leviathan has less than 7 containers running"

@@ -1,9 +1,10 @@
 receivers:
 - name: 'telegram'
   telegram_configs:
-  - chat_id: 
-    bot_token: 
+  - chat_id:
+    bot_token:
     send_resolved: true  # Optional: Send notifications when alerts resolve
+    message: '{{ template "telegram.message" . }}'
 
 route:
   receiver: 'telegram'
