@@ -6,32 +6,22 @@ networks:
 volumes:
     prometheus_data: {}
     # grafana_data: {}
-    # influxdb-data: {}
+    vmdata: {}
 
 services:
-  # Influx 2 is not supported in 32 bit OS
-  # influxdb:
-  #   image: influxdb:2.7.5  # ARM64 supported
-  #   ports:
-  #     - 8086:8086
-  #   volumes:
-  #     - influxdb-data:/media/usb/influxdb2
-  #   environment:
-  #     - INFLUXDB_DB=metrics
-  #     - INFLUXDB_ADMIN_USER=admin
-  #     - INFLUXDB_ADMIN_PASSWORD=adminpass
-  #     - INFLUXDB_BUCKET=prometheus_metrics
-  #     - INFLUXDB_TOKEN=mysecrettoken
-  #     - INFLUXDB_ORG=my-org
-
-  # telegraf:
-  #   image: arm64v8/telegraf:1.30-alpine  # Official ARM64 Alpine build
-  #   ports:
-  #     - 9201:9201
-  #   volumes:
-  #     - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
-  #   depends_on:
-  #     - influxdb
+  victoriametrics:
+    image: victoriametrics/victoria-metrics:latest
+    container_name: victoriametrics
+    ports:
+      - "8428:8428"  # Interfaz web y endpoint de escritura
+    restart: unless-stopped
+    volumes:
+      - vmdata:/storage
+    networks:
+      - docker_internal
+    command:
+      - '--storageDataPath=/storage'
+      - '--retentionPeriod=12'  # 12 meses de retención
 
   prometheus:
     image: prom/prometheus:v2.55.0

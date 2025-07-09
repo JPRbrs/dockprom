@@ -30,3 +30,9 @@ http://nodeexporter.leviathan.home.lan {
     reverse_proxy http://nodeexporter:9100
 }
 
+http://vmetrics.home.lan {
+    basic_auth /* {
+        {$ADMIN_USER} {$ADMIN_PASSWORD_HASH}
+    }
+    reverse_proxy http://victoriametrics:8428
+}

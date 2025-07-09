@@ -1,4 +1,3 @@
-- Configure alerts
 - Configure the rest of the apps
 - Hide long lived token from prom config (render template from secretos with envsubst)
 - Update host names in prometheus.yaml, within leviathan, container names work, DNS should work too
