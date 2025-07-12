@@ -1,5 +1,4 @@
 groups:
-# Power alert - homeassistant_sensor_power_w
 - name: power_alerts
   rules:
   - alert: Power consumption too high
@@ -10,6 +9,34 @@ groups:
     annotations:
       summary: "Power consumption too high - over 3000W"
       description: "There is a high power consumption at home."
+  - alert: Power consumption too high with empty house
+    expr: (homeassistant_input_boolean_state{friendly_name="atHome"} == 1) and (homeassistant_sensor_power_w > 300)
+    for: 5s
+    labels:
+      severity: critical
+    annotations:
+      summary: "The house should be empty but there is a power consumption over 300W"
+      description: "There is a high power consumption at home."
+  - alert: Power outage
+    expr: apcupsd_battery_time_on_seconds > 0
+    for: 5s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Power outage - systems running on battery!!"
+      description: "SAI has starting proving power"
+
+- name: AllTargetsUp
+  rules:
+  - alert: TargetDown
+    expr: up == 0
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Target {{ $labels.instance }} is down"
+      description: "{{ $labels.job }} on {{ $labels.instance }} has been down for more than 1 minute."
+
 - name: docker_containers
   rules:
   - alert: containers running in Valhalla
@@ -28,3 +55,23 @@ groups:
     annotations:
       summary: "Container down in Leviathan"
       description: "Leviathan has less than 7 containers running"
+
+
+- name: disk_usage
+  rules:
+    - alert: Root disk usage below 20%
+      expr: node_filesystem_free_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"} *100 < 20
+      for: 30m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Out of disk space in root partition (instance {{ $labels.instance }})"
+        description: "Disk is almost full (< 20% left)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+    - alert: USB disk usage below 20%
+      expr: node_filesystem_free_bytes{mountpoint="/media/usb"} / node_filesystem_size_bytes{mountpoint="/media/usb"} *100 < 20
+      for: 30m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Out of disk space in USB (instance {{ $labels.instance }})"
+        description: "Disk is almost full (< 20% left)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
