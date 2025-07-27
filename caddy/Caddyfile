@@ -1,5 +1,5 @@
 http://grafana.home.lan {
-    reverse_proxy http://localhost:3000
+    reverse_proxy http://grafana:3000
 }
 
 http://cadvisor.home.lan {
@@ -35,4 +35,8 @@ http://vmetrics.home.lan {
         {$ADMIN_USER} {$ADMIN_PASSWORD_HASH}
     }
     reverse_proxy http://victoriametrics:8428
+}
+
+http://transmission.home.lan {
+    reverse_proxy http://transmission:9091
 }

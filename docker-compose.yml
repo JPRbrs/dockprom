@@ -5,7 +5,7 @@ networks:
 
 volumes:
     prometheus_data: {}
-    # grafana_data: {}
+    grafana_data: {}
     vmdata: {}
 
 services:
@@ -39,10 +39,6 @@ services:
     restart: unless-stopped
     networks:
       - docker_internal
-    # labels:
-    #   org.label-schema.group: "monitoring"
-    # depends_on:
-    #   - telegraf
 
   alertmanager:
     image: prom/alertmanager:v0.28.0
@@ -57,8 +53,6 @@ services:
       - 9093:9093
     networks:
       - docker_internal
-  #   labels:
-  #     org.label-schema.group: "monitoring"
 
   nodeexporter:
     image: prom/node-exporter:v1.8.2
@@ -74,8 +68,6 @@ services:
       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
     restart: unless-stopped
     network_mode: host
-    # labels:
-    #   org.label-schema.group: "monitoring"
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.51.0
@@ -94,25 +86,23 @@ services:
     restart: unless-stopped
     networks:
       - docker_internal
-    # labels:
-    #   org.label-schema.group: "monitoring"
 
-  # grafana:
-  #   image: grafana/grafana:11.3.0
-  #   container_name: grafana
-  #   volumes:
-  #     - grafana_data:/var/lib/grafana
-  #     - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
-  #     - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-  #   environment:
-  #     - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
-  #     - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
-  #     - GF_USERS_ALLOW_SIGN_UP=false
-  #   restart: unless-stopped
-  #   networks:
-  #     - docker_internal
-  #   labels:
-  #     org.label-schema.group: "monitoring"
+  grafana:
+    image: grafana/grafana:11.3.0
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+    environment:
+      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - docker_internal
 
   caddy:
     image: caddy:2.8.4
@@ -129,5 +119,3 @@ services:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
       - ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH:-$2a$14$1l.IozJx7xQRVmlkEQ32OeEEfP5mRxTpbDTCTcXRqn19gXD8YK1pO}
     restart: unless-stopped
-    # labels:
-    #   org.label-schema.group: "monitoring"
