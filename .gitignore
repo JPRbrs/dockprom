@@ -1,5 +1,2 @@
-*DS_Store
-.vs/
-.vscode/
-.idea/
-secretos
+secrets
+prometheus/prometheus.yml

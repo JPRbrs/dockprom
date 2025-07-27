@@ -73,7 +73,7 @@ scrape_configs:
     metrics_path: /api/prometheus
 
     # Long-Lived Access Token
-    bearer_token: 
+    bearer_token: ${TOKEN}
 
     scheme: http
     static_configs:

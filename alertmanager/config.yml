@@ -1,8 +1,8 @@
 receivers:
 - name: 'telegram'
   telegram_configs:
-  - chat_id:
-    bot_token:
+  - chat_id: ${CHATID}
+    bot_token: ${TELEGRAM_TOKEN}
     send_resolved: true  # Optional: Send notifications when alerts resolve
     message: '{{ template "telegram.message" . }}'
 
