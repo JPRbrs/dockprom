@@ -40,3 +40,7 @@ http://vmetrics.home.lan {
 http://transmission.home.lan {
     reverse_proxy http://transmission:9091
 }
+
+http://adguard.home.lan {
+    reverse_proxy http://nginx:80
+}

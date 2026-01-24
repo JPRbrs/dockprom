@@ -39,6 +39,8 @@ services:
     restart: unless-stopped
     networks:
       - docker_internal
+    ports:
+      - 9090:9090
 
   alertmanager:
     image: prom/alertmanager:v0.28.0

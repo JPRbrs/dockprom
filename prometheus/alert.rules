@@ -39,14 +39,14 @@ groups:
 
 - name: docker_containers
   rules:
-  - alert: containers running in Valhalla
-    expr: count(container_tasks_state{image!="", state="running", job="valhalla_cadvisor"}) <2
-    for: 5s
-    labels:
-      severity: critical
-    annotations:
-      summary: "Container down in Valhalla"
-      description: "Valhalla has less than 2 containers running"
+  # - alert: containers running in Valhalla
+  #   expr: count(container_tasks_state{image!="", state="running", job="valhalla_cadvisor"}) <2
+  #   for: 5s
+  #   labels:
+  #     severity: critical
+  #   annotations:
+  #     summary: "Container down in Valhalla"
+  #     description: "Valhalla has less than 2 containers running"
   - alert: containers running in Leviathan
     expr: count(container_tasks_state{image!="", state="running", job="leviathan_cadvisor"}) <7
     for: 5s
