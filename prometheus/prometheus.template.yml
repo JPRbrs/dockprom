@@ -87,6 +87,8 @@ alerting:
       - 'alertmanager:9093'
 
 remote_write:
-  # - url: "http://telegraf:9201/write" # (telegraph)
-  # - url: "http://localhost:9201/api/v1/write" # (telegraph)
   - url: "http://victoriametrics:8428/api/v1/write"
+    write_relabel_configs:
+      - source_labels: ['entity']
+        regexp: "sensor.shellyem_34945473c9c4_channel_1_power"
+        action: keep
