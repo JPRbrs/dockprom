@@ -90,5 +90,5 @@ remote_write:
   - url: "http://victoriametrics:8428/api/v1/write"
     write_relabel_configs:
       - source_labels: ['entity']
-        regexp: "sensor.shellyem_34945473c9c4_channel_1_power"
+        regex: "sensor.shellyem_34945473c9c4_channel_1_power"
         action: keep
